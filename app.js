@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * env2 需放在最上面，config文件才能正确获取环境变量
+ */
+require('env2')('./.env.example');
+
 const Hapi = require('hapi');
 const config = require('./config');
 const routesHelloHapi = require('./routes/hello-hapi');

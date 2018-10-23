@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/wfatec/hapi-retail-api#readme",
   "dependencies": {
+    "env2": "^2.2.2",
     "hapi": "^17.6.0"
   }
 }
