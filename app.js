@@ -3,7 +3,7 @@
 /**
  * env2 需放在最上面，config文件才能正确获取环境变量
  */
-require('env2')('./.env.example');
+require('env2')('./.env');
 
 const Hapi = require('hapi');
 const config = require('./config');
