@@ -18,6 +18,10 @@
   "homepage": "https://github.com/wfatec/hapi-retail-api#readme",
   "dependencies": {
     "env2": "^2.2.2",
-    "hapi": "^17.6.0"
+    "hapi": "^17.6.0",
+    "hapi-swagger": "^9.1.2",
+    "inert": "^5.1.0",
+    "package": "^1.0.1",
+    "vision": "^5.4.0"
   }
 }

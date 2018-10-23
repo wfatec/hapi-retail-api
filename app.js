@@ -8,19 +8,26 @@ require('env2')('./.env');
 const Hapi = require('hapi');
 const config = require('./config');
 const routesHelloHapi = require('./routes/hello-hapi');
+// 引入自定义的 hapi-swagger 插件配置
+const pluginHapiSwagger = require('./plugins/hapi-swagger');
 
 const server = Hapi.server({
     host: config.host,
     port: config.port,
 });
 
-server.route([
-    // 创建一个简单的 hello hapi 接口
-    ...routesHelloHapi,
-]);
 
 const init = async () => {
+    await server.register([
+        // 为系统使用 hapi-swagger
+        ...pluginHapiSwagger,
+    ]);
 
+    await server.route([
+        // 创建一个简单的 hello hapi 接口
+        ...routesHelloHapi,
+    ]);
+    
     await server.start();
     console.log(`Server running at: ${server.info.uri}`);
 };
