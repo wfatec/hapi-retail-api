@@ -1,7 +1,8 @@
 const inert = require('inert');
 const vision = require('vision');
-const package = require('package');
 const hapiSwagger = require('hapi-swagger');
+
+const package = require('../package');
 
 module.exports = [
     inert,
