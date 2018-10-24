@@ -10,7 +10,10 @@
     "db:create:prod": "npm run db:create -- --env production",
     "migration:create": "sequelize migration:create",
     "db:migrate": "sequelize db:migrate",
-    "db:migrate:undo": "sequelize db:migrate:undo"
+    "db:migrate:undo": "sequelize db:migrate:undo",
+    "seed:create": "sequelize seed:create",
+    "db:seed:all": "sequelize db:seed:all",
+    "db:seed:undo:all": "sequelize db:seed:undo:all"
   },
   "repository": {
     "type": "git",
