@@ -4,9 +4,9 @@ module.exports = [
         method: 'GET',
         path: '/',
         handler: (request, h) => {
-            return 'hapi';
+            return 'hello hapi';
         },
-        config: {
+        options: {
             tags: ['api', 'tests'],
             description: '测试hello-hapi',
         }
