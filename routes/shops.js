@@ -10,7 +10,11 @@ module.exports = [
         handler: async (request, h) => {
             
             // 通过 await 来异步查取数据
-            const result = await models.shops.findAll();
+            const result = await models.shops.findAll({
+                attributes: [
+                    'id', 'name'
+                ]
+            });
             return result;
         },
         options: {
