@@ -28,6 +28,7 @@
   "dependencies": {
     "env2": "^2.2.2",
     "hapi": "^17.6.0",
+    "hapi-auth-jwt2": "^8.1.0",
     "hapi-pagination": "^2.0.1",
     "hapi-swagger": "^9.1.2",
     "inert": "^5.1.0",
