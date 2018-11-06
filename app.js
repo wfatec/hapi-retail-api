@@ -10,6 +10,7 @@ const config = require('./config');
 const routesHelloHapi = require('./routes/hello-hapi');
 const routesShops = require('./routes/shops');
 const routesOrders = require('./routes/orders');
+const routesUsers = require('./routes/users');
 // 引入自定义的 hapi-swagger 插件配置
 const pluginHapiSwagger = require('./plugins/hapi-swagger');
 const pluginHapiPagination = require('./plugins/hapi-pagination');
@@ -32,6 +33,7 @@ const init = async () => {
         ...routesHelloHapi,
         ...routesShops,
         ...routesOrders,
+        ...routesUsers,
     ]);
     
     await server.start();
