@@ -6,8 +6,32 @@ module.exports = [
     {
         method: 'POST',
         path: `/${GROUP_NAME}`,
-        handler: (request, h) => {
-            return;
+        handler: async (request, h) => {
+            await models.sequelize.transaction((t) => {
+                const result = models.orders.create(
+                    { user_id: request.auth.credentials.userId },
+                    { transaction: t },
+                ).then((order) => {
+                    const goodsList = [];
+                    request.payload.goodsList.forEach((item) => {
+                        goodsList.push(models.order_goods.create({
+                            order_id: order.dataValues.id,
+                            goods_id: item.goods_id,
+                            // 此处单价的数值应该从商品表中反查出写入，出于教程的精简性而省略该步骤
+                            single_price: 4.9,
+                            count: item.count,
+                        }));
+                    });
+                    return Promise.all(goodsList);
+                });
+                return result;
+            }).then(() => {
+                // 事务已被提交
+                return 'success';
+            }).catch(() => {
+                // 事务已被回滚
+                return 'error';
+            });
         },
         options: {
             tags: ['api', GROUP_NAME],
