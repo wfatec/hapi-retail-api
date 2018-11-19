@@ -109,23 +109,25 @@ module.exports = [
             });
 
             // result 是一个 xml 结构的 response，转换为 jsonObject，并返回前端
-            xml2js.parseString(result.data, (err, parsedResult) => {
-                if (parsedResult.xml) {
-                    if (parsedResult.xml.return_code[0] === 'SUCCESS'
-                    && parsedResult.xml.result_code[0] === 'SUCCESS') {
-                        // 待签名的原始支付数据
-                        const replyData = {
-                            appId: parsedResult.xml.appid[0],
-                            timeStamp: (Date.now() / 1000).toString(),
-                            nonceStr: parsedResult.xml.nonce_str[0],
-                            package: `prepay_id=${parsedResult.xml.prepay_id[0]}`,
-                            signType: 'MD5',
-                        };
-                        replyData.paySign = getSignData(replyData, config.wxPayApiKey);
-                        return replyData;
+            return new Promise((resolve, reject) => {
+                xml2js.parseString(result.data, (err, parsedResult) => {
+                    if (parsedResult.xml) {
+                        if (parsedResult.xml.return_code[0] === 'SUCCESS'
+                        && parsedResult.xml.result_code[0] === 'SUCCESS') {
+                            // 待签名的原始支付数据
+                            const replyData = {
+                                appId: parsedResult.xml.appid[0],
+                                timeStamp: (Date.now() / 1000).toString(),
+                                nonceStr: parsedResult.xml.nonce_str[0],
+                                package: `prepay_id=${parsedResult.xml.prepay_id[0]}`,
+                                signType: 'MD5',
+                            };
+                            replyData.paySign = getSignData(replyData, config.wxPayApiKey);
+                            resolve(replyData);
+                        }
                     }
-                }
-            });
+                });
+            }); 
         },
         options: {
             tags: ['api', GROUP_NAME],
@@ -140,28 +142,30 @@ module.exports = [
     {
         method: 'POST',
         path: `/${GROUP_NAME}/pay/notify`,
-        handler: async (request, reply) => {
-            xml2js.parseString(request.payload, async (err, parsedResult) => {
-                if (parsedResult.xml.return_code[0] === 'SUCCESS') {
-                    // 微信统一支付状态成功，需要检验本地数据的逻辑一致性
-                    // 省略...细节逻辑校验
-                    // 更新该订单编号下的支付状态未已支付
-                    const orderId = parsedResult.xml.out_trade_no[0];
-                    const orderResult = await models.orders.findOne({ where: { id: orderId } });
-                    orderResult.payment_status = '1';
-                    await orderResult.save();
-                    // 返回微信，校验成功
-                    const retVal = {
-                        return_code: 'SUCCESS',
-                        return_msg: 'OK',
-                    };
-                    const builder = new xml2js.Builder({
-                        rootName: 'xml',
-                        headless: true,
-                    });
-                    return builder.buildObject(retVal);
-                }
-            });
+        handler: async (request, h) => {
+            return new Promise((resolve, reject) => {
+                xml2js.parseString(request.payload, async (err, parsedResult) => {
+                    if (parsedResult.xml.return_code[0] === 'SUCCESS') {
+                        // 微信统一支付状态成功，需要检验本地数据的逻辑一致性
+                        // 省略...细节逻辑校验
+                        // 更新该订单编号下的支付状态未已支付
+                        const orderId = parsedResult.xml.out_trade_no[0];
+                        const orderResult = await models.orders.findOne({ where: { id: orderId } });
+                        orderResult.payment_status = '1';
+                        await orderResult.save();
+                        // 返回微信，校验成功
+                        const retVal = {
+                            return_code: 'SUCCESS',
+                            return_msg: 'OK',
+                        };
+                        const builder = new xml2js.Builder({
+                            rootName: 'xml',
+                            headless: true,
+                        });
+                        resolve(builder.buildObject(retVal));
+                    }
+                });
+            }) 
         },
         config: {
             tags: ['api', GROUP_NAME],
